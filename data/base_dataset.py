@@ -11,58 +11,24 @@ from PIL import Image
 Define a base dataset contains some function I always useself.
 """
 
-Config = Config(sys.argv[1])
 
 class Local_norm(transforms.Normalize):
 
     def __init__(self):
-
-        self.mask = np.zeros(shape=Config.IMG_SHAPES)
-        x0, y0 = int(0.5*self.mask.shape[0]), int(0.5*self.mask.shape[1])
-        for i in range(self.mask.shape[0]):
-            for j in range(self.mask.shape[1]):
-                if (i-x0)**2 + (j-y0)**2 < x0**2:
-                    self.mask[i,j] = 1
-                else:
-                    self.mask[i,j] = 0
+        pass
 
     def __call__(self, tensor):
 
         tensor_arr = tensor.squeeze().numpy()
-        mean = self.mean(tensor_arr)
-        std = self.std(tensor_arr, mean)
-        array = np.zeros(shape=Config.IMG_SHAPES)
+        mean = tensor_arr.mean()
+        std = tensor_arr.std()
         for i in range(tensor_arr.shape[0]):
             for j in range(tensor_arr.shape[1]):
-                if self.mask[i, j] == 1:
-                    array[i,j] = (tensor_arr[i,j]-mean)/std
-        tensor = (torch.from_numpy(array.astype(np.float32))).unsqueeze(0)
+                tensor_arr[i,j] = (tensor_arr[i,j]-mean)/std
+        tensor = (torch.from_numpy(tensor_arr.astype(np.float32))).unsqueeze(0)
 
         return tensor, mean, std
 
-    def mean(self, array):
-
-        num = 0
-        sum = 0
-        for i in range(array.shape[0]):
-            for j in range(array.shape[1]):
-                if self.mask[i,j] == 1:
-                    num += 1
-                    sum += array[i,j]
-
-        return sum/num
-
-    def std(self,array, mean):
-
-        num = 0
-        sum = 0
-        for i in range(array.shape[0]):
-            for j in range(array.shape[1]):
-                if self.mask[i,j] == 1:
-                    num += 1
-                    sum += (array[i,j] - mean)**2
-
-        return pow(sum/num, 0.5)
 
 class BaseDataset(Dataset):
     def __init__(self):
@@ -84,7 +50,7 @@ class BaseDataset(Dataset):
         self.transforms_oprs["vflip"] = transforms.RandomVerticalFlip(0.5)
         self.transforms_oprs["random_crop"] = transforms.RandomCrop(crop_size)
         self.transforms_oprs["to_tensor"] = transforms.ToTensor()
-        self.transforms_oprs["norm"] = transforms.Normalize(mean=[Config.MEAN],std=[Config.STD])
+        self.transforms_oprs["norm"] = transforms.Normalize(mean=[0],std=[1])
         self.transforms_oprs["resize"] = transforms.Resize(crop_size)
         self.transforms_oprs["center_crop"] = transforms.CenterCrop(crop_size)
         self.transforms_oprs["rdresizecrop"] = transforms.RandomResizedCrop(crop_size, scale=(0.7, 1.0), ratio=(1,1), interpolation=2)

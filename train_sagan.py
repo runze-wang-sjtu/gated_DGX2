@@ -19,7 +19,6 @@ import time
 import sys
 import os
 
-# vis = Visdom()
 config = Config(sys.argv[1])
 
 logger = logging.getLogger(__name__)
@@ -74,7 +73,7 @@ def validate(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoc
     for i, (imgs, masks, mean, std) in enumerate(dataloader):
 
         data_time.update(time.time() - end)
-        masks = masks['random_free_form']
+        masks = masks[config.MASK_TYPES[0]]
         #masks = (masks > 0).type(torch.FloatTensor)
 
         imgs, masks = imgs.to(device), masks.to(device)
@@ -134,8 +133,6 @@ def validate(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoc
                         .format(epoch, i+1, len(dataloader), batch_time=batch_time, data_time=data_time, whole_loss=losses['whole_loss'], r_loss=losses['r_loss'] \
                         ,g_loss=losses['g_loss'], d_loss=losses['d_loss']))
 
-            # vis.line([[r_loss.item(), (1 / config.GAN_LOSS_ALPHA) * g_loss.item(), d_loss.item()]],
-            #          epoch*len(dataloader)+i, win='validation_loss', update='append')
             j = 0
             for tag, images in info.items():
                 h, w = images.shape[1], images.shape[2] // 5
@@ -155,9 +152,7 @@ def validate(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoc
             path1, path2 = val_save_real_dir, val_save_gen_dir
             fid_score = metrics['fid']([path1, path2], cuda=False)
             ssim_score = metrics['ssim']([path1, path2])
-            # vis.line([[fid_score.item(),ssim_score.item()]], [epoch*len(dataloader)+i], win='validation_metric', update='append')
-            # tensorboardlogger.scalar_summary('val/fid', fid_score.item(), epoch*len(dataloader)+i)
-            # tensorboardlogger.scalar_summary('val/ssim', ssim_score.item(), epoch*len(dataloader)+i)
+
             break
 
         end = time.time()
@@ -165,7 +160,7 @@ def validate(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoc
     #          [epoch], win='validation_loss', update='append')
     wandb.log({"val_r_loss": losses['r_loss'].out(),
                "val_g_loss": (1 / config.GAN_LOSS_ALPHA) * losses['g_loss'].out(),
-               "val_d_loss": losses['d_loss'].out()})
+               "val_d_loss": losses['d_loss'].out()},step=epoch)
 
 
 def train(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoch, device=cuda0, val_datas=None):
@@ -187,7 +182,7 @@ def train(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoch, 
 
     for i, (imgs, masks, mean, std) in enumerate(dataloader):
         data_time.update(time.time() - end)
-        masks = masks['random_free_form']
+        masks = masks[config.MASK_TYPES[0]]
 
         # Optimize Discriminator
         optD.zero_grad(), netD.zero_grad(), netG.zero_grad(), optG.zero_grad()
@@ -275,12 +270,13 @@ def train(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoch, 
     #          [epoch], win='train_loss', update='append')
     wandb.log({"train_r_loss": losses['r_loss'].out(),
                "train_g_loss": (1 / config.GAN_LOSS_ALPHA) * losses['g_loss'].out(),
-               "train_d_loss": losses['d_loss'].out()})
+               "train_d_loss": losses['d_loss'].out()}, step=epoch)
 
 
 def main():
     logger_init()
-    wandb.init(project="spine_local_norm")
+    wandb.init(project="vertebra_with_generated_mask")
+
     dataset_type = config.DATASET
     batch_size = config.BATCH_SIZE
 
@@ -348,12 +344,7 @@ def main():
     # Start Training
     logger.info("Start Training...")
     epoch = config.EPOCH
-    # vis.line([[0.,0.,0.]], [0.], win='train_loss', opts=dict(title='train_loss',
-    #          legend=['Recon_Loss', 'G_loss', 'D_loss']))
-    # vis.line([[0.,0.,0.]], [0.], win='validation_loss', opts=dict(title='val_loss',
-    #          legend=['Recon_Loss', 'G_loss', 'D_loss']))
-    # vis.line([[0.,0.]], [0.], win='validation_metric', opts=dict(title='val_metric',
-    #          legend=['fid_score','ssim_score']))
+
     for i in range(epoch):
         #validate(netG, netD, gan_loss, recon_loss, dis_loss, optG, optD, val_loader, i, device=cuda0)
 

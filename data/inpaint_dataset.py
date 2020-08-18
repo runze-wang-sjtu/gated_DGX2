@@ -9,7 +9,7 @@ from .base_dataset import BaseDataset, NoriBaseDataset, Local_norm
 from torch.utils.data import Dataset, DataLoader
 import pickle as pkl
 
-ALLMASKTYPES = ['bbox', 'seg', 'random_bbox', 'random_free_form', 'val', 'spine_simulation_2D']
+ALLMASKTYPES = ['bbox', 'seg', 'random_bbox', 'random_free_form', 'val', 'generated']
 
 class InpaintDataset(BaseDataset):
     """
@@ -75,23 +75,14 @@ class InpaintDataset(BaseDataset):
         for mask_type in self.mask_paths:
             mask_paths[mask_type] = self.mask_paths[mask_type][index]
 
-        # mean, std = self.norm_counter(img_path)
         img = self.transforms_image(self.read_img(img_path))
         img, mean, std = self.local_norm(img)
-        masks = {mask_type:255*self.transforms_mask(self.read_mask(mask_paths[mask_type], mask_type))[:1, :,:] for mask_type in mask_paths}
+        masks = {mask_type:self.transforms_mask(self.read_mask(mask_paths[mask_type], mask_type))[:1, :,:] for mask_type in mask_paths}
         # masks = {mask_type:self.transforms_fun(self.read_mask(mask_paths[mask_type], mask_type))[:1, :,:] for mask_type in mask_paths}
 
         return img, masks, mean, std
 
-    # def norm_counter(self, path):
-    #     """
-    #     count mean and std of img
-    #     """
-    #     img = Image.open(path).convert('L')
-    #     arr = np.array(img) / 255
-    #     mean, std = arr.mean(), arr.std()
-    #
-    #     return mean, std
+
 
     def read_img(self, path):
         """
@@ -122,9 +113,9 @@ class InpaintDataset(BaseDataset):
         elif 'val' in mask_type:
             mask = InpaintDataset.read_val_mask(path)
             return Image.fromarray(np.tile(mask,(1,1,3)).astype(np.uint8))
-        elif mask_type == 'spine_simulation_2D':
+        elif mask_type == 'generated':
             mask = Image.open(path)
-            mask = Image.fromarray((np.array(mask) / 255).astype(np.uint8))
+            mask = Image.fromarray((np.array(mask)).astype(np.uint8))
             return mask
         else:
             bbox = InpaintDataset.read_bbox(path)
