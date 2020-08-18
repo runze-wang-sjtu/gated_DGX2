@@ -1,0 +1,17 @@
+2020-08-07 16:18:39,579 - train_sagan.py[line:250] - INFO: Initialize the dataset...
+2020-08-07 16:18:42,119 - train_sagan.py[line:283] - INFO: Finish the dataset initialization.
+2020-08-07 16:18:42,120 - train_sagan.py[line:286] - INFO: Define the Network Structure and Losses
+2020-08-07 16:18:42,389 - train_sagan.py[line:306] - INFO: Finish Define the Network Structure and Losses
+2020-08-07 16:18:42,389 - train_sagan.py[line:309] - INFO: Start Training...
+2020-08-07 16:19:05,006 - train_sagan.py[line:212] - INFO: Epoch 0, [50/40521]: Batch Time:0.3866,	 Data Time:0.0001, Whole Gen Loss:2.9617	,Recon Loss:2.9584,	 GAN Loss:0.0033,	 D Loss:1.8047
+2020-08-07 16:19:24,193 - train_sagan.py[line:212] - INFO: Epoch 0, [100/40521]: Batch Time:0.3826,	 Data Time:0.0001, Whole Gen Loss:2.2454	,Recon Loss:2.2438,	 GAN Loss:0.0016,	 D Loss:1.3201
+2020-08-07 16:19:43,593 - train_sagan.py[line:212] - INFO: Epoch 0, [150/40521]: Batch Time:0.3860,	 Data Time:0.0001, Whole Gen Loss:2.1079	,Recon Loss:2.1030,	 GAN Loss:0.0049,	 D Loss:1.1660
+2020-08-07 16:20:03,081 - train_sagan.py[line:212] - INFO: Epoch 0, [200/40521]: Batch Time:0.3856,	 Data Time:0.0001, Whole Gen Loss:2.4543	,Recon Loss:2.4513,	 GAN Loss:0.0030,	 D Loss:2.5563
+2020-08-07 16:20:22,555 - train_sagan.py[line:212] - INFO: Epoch 0, [250/40521]: Batch Time:0.3873,	 Data Time:0.0001, Whole Gen Loss:2.3811	,Recon Loss:2.3787,	 GAN Loss:0.0024,	 D Loss:1.6223
+2020-08-07 16:20:42,065 - train_sagan.py[line:212] - INFO: Epoch 0, [300/40521]: Batch Time:0.3874,	 Data Time:0.0001, Whole Gen Loss:2.0900	,Recon Loss:2.0884,	 GAN Loss:0.0016,	 D Loss:1.3633
+2020-08-07 16:21:01,479 - train_sagan.py[line:212] - INFO: Epoch 0, [350/40521]: Batch Time:0.3866,	 Data Time:0.0001, Whole Gen Loss:1.7899	,Recon Loss:1.7895,	 GAN Loss:0.0004,	 D Loss:1.4326
+2020-08-07 16:21:21,167 - train_sagan.py[line:212] - INFO: Epoch 0, [400/40521]: Batch Time:0.3942,	 Data Time:0.0001, Whole Gen Loss:2.0805	,Recon Loss:2.0801,	 GAN Loss:0.0005,	 D Loss:1.8274
+2020-08-07 16:21:40,747 - train_sagan.py[line:212] - INFO: Epoch 0, [450/40521]: Batch Time:0.3906,	 Data Time:0.0001, Whole Gen Loss:2.2317	,Recon Loss:2.2332,	 GAN Loss:-0.0015,	 D Loss:1.4350
+2020-08-07 16:22:00,365 - train_sagan.py[line:212] - INFO: Epoch 0, [500/40521]: Batch Time:0.4022,	 Data Time:0.0001, Whole Gen Loss:1.9203	,Recon Loss:1.9224,	 GAN Loss:-0.0021,	 D Loss:2.0874
+2020-08-07 16:22:19,821 - train_sagan.py[line:212] - INFO: Epoch 0, [550/40521]: Batch Time:0.3874,	 Data Time:0.0001, Whole Gen Loss:1.6889	,Recon Loss:1.6909,	 GAN Loss:-0.0020,	 D Loss:1.7888
+2020-08-07 16:22:39,347 - train_sagan.py[line:212] - INFO: Epoch 0, [600/40521]: Batch Time:0.3944,	 Data Time:0.0001, Whole Gen Loss:1.9859	,Recon Loss:1.9893,	 GAN Loss:-0.0034,	 D Loss:1.9002
