@@ -265,7 +265,7 @@ def train(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoch, 
 
 def main():
     logger_init()
-    wandb.init(project="vertebra_with_generated_mask")
+    wandb.init(project="vertebra_with_generated_mask_dis2to8")
 
     dataset_type = config.DATASET
     batch_size = config.BATCH_SIZE
