@@ -133,16 +133,14 @@ def validate(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoc
                         .format(epoch, i+1, len(dataloader), batch_time=batch_time, data_time=data_time, whole_loss=losses['whole_loss'], r_loss=losses['r_loss'] \
                         ,g_loss=losses['g_loss'], d_loss=losses['d_loss']))
 
+
             j = 0
             for tag, images in info.items():
                 h, w = images.shape[1], images.shape[2] // 5
                 for val_img in images:
                     raw_img = val_img[:,0:w,:]
-                    # raw_img = ((raw_img - np.min(raw_img)) / np.max(raw_img)) * 255
                     real_img = val_img[:,(3*w):(4*w),:]
-                    # real_img = ((real_img - np.min(real_img)) / np.max(real_img)) * 255
                     gen_img = val_img[:,(4*w):,:]
-                    # gen_img = ((gen_img - np.min(gen_img)) / np.max(gen_img)) * 255
 
                     cv2.imwrite(os.path.join(val_save_real_dir, "{}.png".format(j)), real_img)
                     cv2.imwrite(os.path.join(val_save_gen_dir, "{}.png".format(j)), gen_img)
@@ -156,8 +154,10 @@ def validate(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoc
             break
 
         end = time.time()
-    # vis.line([[losses['r_loss'].out(), (1 / config.GAN_LOSS_ALPHA) * losses['g_loss'].out(), losses['d_loss'].out()]],
-    #          [epoch], win='validation_loss', update='append')
+
+    wandb.log({"fid_score": fid_score.item(),
+               "ssim_score": ssim_score.item()},step=epoch)
+
     wandb.log({"val_r_loss": losses['r_loss'].out(),
                "val_g_loss": (1 / config.GAN_LOSS_ALPHA) * losses['g_loss'].out(),
                "val_d_loss": losses['d_loss'].out()},step=epoch)
@@ -238,15 +238,6 @@ def train(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoch, 
             # Tensorboard logger for scaler and images
             info_terms = {'ReconLoss':losses['r_loss'], "GANLoss":losses['g_loss'], "DLoss":d_loss.item()}
 
-            # vis.line([[r_loss.item(), (1 / config.GAN_LOSS_ALPHA) * g_loss.item(), d_loss.item()]],
-            #          [epoch*len(dataloader)+i], win='train_loss', update='append')
-
-            # for tag, value in info_terms.items():
-            #     tensorboardlogger.scalar_summary(tag, value, epoch*len(dataloader)+i)
-            #
-            # for tag, value in losses.items():
-            #     tensorboardlogger.scalar_summary('avg_'+tag, value.avg, epoch*len(dataloader)+i)
-
             def img2photo(imgs):
                 # return (((imgs*0.263)+0.472)*255).transpose(1,2).transpose(2,3).detach().cpu().numpy()
                 return ((imgs+1)*127.5).transpose(1,2).transpose(2,3).detach().cpu().numpy()
@@ -266,8 +257,7 @@ def train(netG, netD, GANLoss, ReconLoss, DLoss, optG, optD, dataloader, epoch, 
             netG.train()
             netD.train()
         end = time.time()
-    # vis.line([[losses['r_loss'].out(), (1 / config.GAN_LOSS_ALPHA) * losses['g_loss'].out(), losses['d_loss'].out()]],
-    #          [epoch], win='train_loss', update='append')
+
     wandb.log({"train_r_loss": losses['r_loss'].out(),
                "train_g_loss": (1 / config.GAN_LOSS_ALPHA) * losses['g_loss'].out(),
                "train_d_loss": losses['d_loss'].out()}, step=epoch)
